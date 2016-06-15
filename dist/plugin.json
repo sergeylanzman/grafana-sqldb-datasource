@@ -9,8 +9,8 @@
 
   "info": {
     "author": {
-      "name": "Nozomi Anzai",
-      "url": "https://github.com/anzai/grafana-sqldb"
+      "name": "SRA OSS, Inc. Japan",
+      "url": "https://github.com/sraoss/grafana-sqldb-datasource"
     }
   }
 }
