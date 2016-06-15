@@ -82,9 +82,9 @@ SELECT $unixtimeColumn * 1000 AS time_msec,
        FROM myschema.dstat
        WHERE tag ~* '/^$host_t$/' AND
              $timeFilter
-             GROUP BY $unixtimeColumn
-             ORDER BY $unixtimeColumn
-             ```
+GROUP BY $unixtimeColumn
+ORDER BY $unixtimeColumn
+```
 
 ### Actual query in PostgreSQL
 #### timestamp type
@@ -93,10 +93,10 @@ SELECT round(extract(epoch from coltime::timestamptz) / 1200) * 1200 * 1000 AS t
        avg(cpu_usr)
        FROM myschema.dstat
        WHERE tag ~* '/^webserver123$/' AND
-             coltime > (now() - '7d'::interval)
-             GROUP BY round(extract(epoch from coltime::timestamptz) / 1200) * 1200
-             ORDER BY round(extract(epoch from coltime::timestamptz) / 1200) * 1200
-             ```
+coltime > (now() - '7d'::interval)
+GROUP BY round(extract(epoch from coltime::timestamptz) / 1200) * 1200
+ORDER BY round(extract(epoch from coltime::timestamptz) / 1200) * 1200
+```
 
 #### number type
 ```
@@ -104,10 +104,10 @@ SELECT round(coltime / 1200) * 1200 * 1000 AS time_msec,
        avg(cpu_usr)
        FROM myschema.dstat
        WHERE tag ~* '/^webserver123$/' AND
-             coltime > extract(epoch from (now() - '7d'::interval)::timestamptz)
-             GROUP BY round(coltime / 1200) * 1200
-             ORDER BY round(coltime / 1200) * 1200
-             ```
+coltime > extract(epoch from (now() - '7d'::interval)::timestamptz)
+GROUP BY round(coltime / 1200) * 1200
+ORDER BY round(coltime / 1200) * 1200
+```
 
 ### Actual query in MySQL
 #### timestamp type
@@ -127,10 +127,10 @@ SELECT (coltime DIV 1200) * 1200 * 1000 AS time_msec,
        avg(cpu_usr)
        FROM myschema.dstat
        WHERE tag REGEXP '^webserver123$' AND
-             coltime > UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 7 DAY))
-             GROUP BY (coltime DIV 1200) * 1200
-             ORDER BY (coltime DIV 1200) * 1200
-             ```
+coltime > UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL 7 DAY))
+GROUP BY (coltime DIV 1200) * 1200
+ORDER BY (coltime DIV 1200) * 1200
+```
 
 ## Tested versions of RDBMS
 
