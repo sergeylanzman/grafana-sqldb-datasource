@@ -119,7 +119,7 @@ SELECT (UNIX_TIMESTAMP(coltime) DIV 1200) * 1200 * 1000 AS time_msec,
              coltime > DATE_SUB(CURDATE(), INTERVAL 7 DAY)
              GROUP BY (UNIX_TIMESTAMP(coltime) DIV 1200) * 1200
              ORDER BY (UNIX_TIMESTAMP(coltime) DIV 1200) * 1200;
-             ```
+```
 
 #### number type
 ```
