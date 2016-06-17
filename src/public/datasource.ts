@@ -85,6 +85,12 @@ export default class SqlDatasource {
             seriesList.push(sqlSeries.getTable());
             break;
           }
+
+          case 'docs': {
+            seriesList.push(sqlSeries.getDocs());
+            break;
+          }
+
           default: {
             var timeSeries = sqlSeries.getTimeSeries();
             for (y = 0; y < timeSeries.length; y++) {

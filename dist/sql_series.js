@@ -45,14 +45,10 @@ function (_, TableModel) {
         var datapoints = [];
         if (series.values) {
           for (i = 0; i < series.values.length; i++) {
-            var sample = Number(series.values[i][j]);
-            var ts = parseFloat(series.values[i][0]);
-
-            if (isNaN(sample)) {
-              datapoints[i] = [series.values[i][j], ts];
-            } else {
-              datapoints[i] = [sample, ts];
-            }
+            datapoints[i] = [
+                self._formatValue(series.values[i][j]),
+                self._formatValue(series.values[i][0])
+            ];
           }
         }
 
@@ -98,7 +94,7 @@ function (_, TableModel) {
       _.each(series.values, function (value) {
         var data = {
           annotation: self.annotation,
-          time: + new Date(parseFloat(value[timeCol])),
+          time: + new Date(self._formatValue(value[timeCol])),
           title: value[titleCol],
           tags: value[tagsCol],
           text: value[textCol]
@@ -135,7 +131,7 @@ function (_, TableModel) {
       if (series.values) {
         for (i = 0; i < series.values.length; i++) {
           var values = series.values[i];
-          var reordered = [parseFloat(values[0])];
+          var reordered = [self._formatValue(values[0])];
           if (series.tags) {
             for (var key in series.tags) {
               if (series.tags.hasOwnProperty(key)) {
@@ -152,6 +148,38 @@ function (_, TableModel) {
     });
 
     return table;
+  };
+
+  p.getDocs = function() {
+    var self = this;
+    var rows = { datapoints: [], target: self.series[0].name, type: 'docs' };
+
+    _.each(self.series, function(series, seriesIndex) {
+        _.each(series.values, function(values) {
+          var reordered = {};
+
+          _.each(values, function(value, i) {
+            var column = series.columns[i];
+            reordered[column] = self._formatValue(value);
+          });
+
+          rows.datapoints.push(reordered);
+        });
+    });
+
+    console.log(rows);
+
+    return rows;
+  };
+
+  p._formatValue = function(value) {
+    var v_numeric = Number(value);
+
+    if (isNaN(value)) {
+      return value;
+    } else {
+      return parseFloat(v_numeric);
+    }
   };
 
   return SqlSeries;

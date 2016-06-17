@@ -44,6 +44,7 @@ System.register(['./query_part_editor', 'angular', 'lodash', './query_builder', 
                     this.resultFormats = [
                         { text: 'Time series', value: 'time_series' },
                         { text: 'Table', value: 'table' },
+                        { text: 'Docs', value: 'docs' },
                     ];
                     this.schemaSegment = uiSegmentSrv.newSegment(this.target.schema);
                     if (!this.target.table) {
