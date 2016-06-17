@@ -140,7 +140,7 @@ function (_, TableModel) {
             }
           }
           for (j = 1; j < values.length; j++) {
-            reordered.push(values[j]);
+            reordered.push(self._formatValue(values[j]));
           }
           table.rows.push(reordered);
         }
