@@ -82,9 +82,19 @@
 								ng-repeat="part in ctrl.queryModel.groupByParts"
 								part="part"
 								class="gf-form-label query-part"
-								remove-action="ctrl.removeGroupByPart(part, $index)" part-updated="ctrl.refresh();" get-options="ctrl.getPartOptions(part)">
+								remove-action="ctrl.removeGroupByPart(part, $index)"
+								part-updated="ctrl.refresh();"
+								get-options="ctrl.getPartOptions(part)">
 				</sql-query-part-editor>
 			</div>
+
+            <div class="gf-form">
+				<metric-segment
+					segment="ctrl.groupBySegment"
+					get-options="ctrl.getGroupByOptions()"
+					on-change="ctrl.groupByAction(part, $index)">
+				</metric-segment>
+            </div>
 
 			<div class="gf-form gf-form--grow">
 				<div class="gf-form-label gf-form-label--grow"></div>

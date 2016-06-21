@@ -70,6 +70,8 @@ export class SqlQueryCtrl extends QueryCtrl {
       this.tagSegments.push(uiSegmentSrv.newKeyValue(tag.value));
     }
 
+    this.groupBySegment = this.uiSegmentSrv.newPlusButton();
+    //this.fixGroupBySegments();
     this.fixTagSegments();
     this.buildSelectMenu();
     this.removeTagFilterSegment = uiSegmentSrv.newSegment({fake: true, value: '-- remove tag filter --'});
@@ -112,7 +114,39 @@ export class SqlQueryCtrl extends QueryCtrl {
     }, []);
   }
 
+  getGroupByOptions(part) {
+    var query = this.queryBuilder.buildExploreQuery('TAG_KEYS');
+
+    return this.datasource.metricFindQuery(query).then(tags => {
+      var options = [];
+      if (!this.queryModel.hasGroupByTime()) {
+        options.push(this.uiSegmentSrv.newSegment({value: 'time($interval)'}));
+      }
+      for (let tag of tags) {
+        options.push(this.uiSegmentSrv.newSegment({value: 'tag(' + tag.text + ')'}));
+      }
+      return options;
+    }).catch(this.handleQueryError.bind(this));
+
+  }
+
+  /*
+  fixGroupBySegments() {
+    var count = this.groupBySegment.length;
+    var lastSegment = this.groupBySegment[Math.max(count-1, 0)];
+    console.log(this.groupBySegment);
+
+    if (!lastSegment || lastSegment.type !== 'plus-button') {
+      this.groupBySegment.push(this.uiSegmentSrv.newPlusButton());
+    }
+  }
+  */
+
   groupByAction() {
+    this.queryModel.addGroupBy(this.groupBySegment.value);
+    var plusButton = this.uiSegmentSrv.newPlusButton();
+    this.groupBySegment.value  = plusButton.value;
+    this.groupBySegment.html  = plusButton.html;
     this.panelCtrl.refresh();
   }
 

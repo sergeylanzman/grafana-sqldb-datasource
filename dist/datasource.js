@@ -75,7 +75,12 @@ System.register(['lodash', 'app/core/utils/datemath', './sql_series', './sql_que
                             if (alias) {
                                 alias = _this.templateSrv.replace(target.alias, options.scopedVars);
                             }
-                            var sqlSeries = new sql_series_1.default({ series: data.results[i].series, table: target.table, alias: alias });
+                            var sqlSeries = new sql_series_1.default({
+                                series: data.results[i].series,
+                                table: target.table,
+                                alias: alias,
+                                groupBy: target.groupBy
+                            });
                             switch (target.resultFormat) {
                                 case 'table': {
                                     seriesList.push(sqlSeries.getTable());

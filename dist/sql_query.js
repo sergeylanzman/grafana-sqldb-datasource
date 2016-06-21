@@ -169,31 +169,55 @@ System.register(['lodash', './query_part'], function(exports_1) {
                             return target.query;
                         }
                     }
+                    var hasTimeGroupBy = false;
+                    var groupByClause = '';
+                    var orderByClause = '';
                     var query = 'SELECT ';
-                    query += '$unixtimeColumn * 1000 AS time_msec, ';
-                    var i, y;
+                    if (target.groupBy.length !== 0) {
+                        lodash_1.default.each(this.target.groupBy, function (groupBy, i) {
+                            if (i !== 0) {
+                                query += ', ';
+                                groupByClause += ', ';
+                            }
+                            switch (groupBy.type) {
+                                case 'time':
+                                    query += '$unixtimeColumn * 1000 AS time_msec';
+                                    groupByClause = '$unixtimeColumn';
+                                    break;
+                                case 'tag':
+                                    query += groupBy.params[0];
+                                    groupByClause += groupBy.params[0];
+                                    break;
+                            }
+                        });
+                        query += ', ';
+                    }
+                    var i, j;
+                    var targetList = '';
                     for (i = 0; i < this.selectModels.length; i++) {
                         var parts = this.selectModels[i];
                         var selectText = "";
-                        for (y = 0; y < parts.length; y++) {
-                            var part = parts[y];
+                        for (j = 0; j < parts.length; j++) {
+                            var part = parts[j];
                             selectText = part.render(selectText);
                         }
                         if (i > 0) {
-                            query += ', ';
+                            targetList += ', ';
                         }
-                        query += selectText;
+                        targetList += selectText;
                     }
+                    query += targetList;
                     query += ' FROM ' + this.gettableAndSchema(interpolate) + ' WHERE ';
                     var conditions = lodash_1.default.map(target.tags, function (tag, index) {
                         return _this.renderTagCondition(tag, index, interpolate);
                     });
                     query += conditions.join(' ');
                     query += (conditions.length > 0 ? ' AND ' : '') + '$timeFilter';
-                    if (target.groupBy.length !== 0) {
-                        query += ' GROUP BY $unixtimeColumn';
+                    if (groupByClause) {
+                        query += ' GROUP BY ' + groupByClause;
                     }
-                    query += ' ORDER BY $unixtimeColumn';
+                    orderByClause = groupByClause || targetList;
+                    query += ' ORDER BY ' + orderByClause;
                     return query;
                 };
                 return SqlQuery;

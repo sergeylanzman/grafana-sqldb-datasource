@@ -78,7 +78,12 @@ export default class SqlDatasource {
           alias = this.templateSrv.replace(target.alias, options.scopedVars);
         }
 
-        var sqlSeries = new SqlSeries({ series: data.results[i].series, table: target.table, alias: alias });
+        var sqlSeries = new SqlSeries({
+          series: data.results[i].series,
+          table:  target.table,
+          alias:  alias,
+          groupBy: target.groupBy
+        });
 
         switch (target.resultFormat) {
           case 'table': {

@@ -9,6 +9,7 @@ function (_, TableModel) {
     this.series = options.series;
     this.table = options.table;
     this.alias = options.alias;
+    this.groupBy = options.groupBy;
     this.annotation = options.annotation;
   }
 
@@ -23,37 +24,52 @@ function (_, TableModel) {
       return output;
     }
 
+    var seriesName = self.table;
+
+    var seriesDatapoints = {};
     _.each(self.series, function(series) {
-      var columns = series.columns.length;
-      var tags = _.map(series.tags, function(value, key) {
-        return key + ': ' + value;
-      });
+      _.each(series.values, function(row) {
+        var tags = [];
+        var tagsStr = '';
 
-      for (j = 1; j < columns; j++) {
-        var seriesName = self.table;
-        var columnName = series.columns[j];
-        if (columnName !== 'value') {
-          seriesName = seriesName + '.' + columnName;
-        }
+        _.each(row, function(value, i) {
+          if (i < self.groupBy.length) {
+            if (! tagsStr) {
+              for (j = 0; j < self.groupBy.length; j++) {
+                if (j !== 0) {
+                  tags.push(row[j]);
+                }
+              }
+              if (tags.length !== 0) {
+                tagsStr = ' {' + tags.join(', ') + '}';
+              }
+            }
 
-        if (self.alias) {
-          seriesName = self._getSeriesName(series, j);
-        } else if (series.tags) {
-          seriesName = seriesName + ' {' + tags.join(', ') + '}';
-        }
+          } else {
+            var columnName = series.columns[i];
+            if (columnName !== 'value') {
+              seriesName = seriesName + '.' + columnName;
+            }
+            if (self.alias) {
+              seriesName = self._getSeriesName(series, i);
+            }
+            seriesName = seriesName + tagsStr;
 
-        var datapoints = [];
-        if (series.values) {
-          for (i = 0; i < series.values.length; i++) {
-            datapoints[i] = [
-                self._formatValue(series.values[i][j]),
-                self._formatValue(series.values[i][0])
-            ];
+            if (! seriesDatapoints[seriesName]) {
+              seriesDatapoints[seriesName] = [];
+            }
+
+            seriesDatapoints[seriesName].push([
+              self._formatValue(value),   // numeric value
+              self._formatValue(row[0])   // timestamp
+            ]);
           }
-        }
+        });
+      });
+    });
 
-        output.push({ target: seriesName, datapoints: datapoints});
-      }
+    _.each(seriesDatapoints, function(datapoints, seriesName) {
+      output.push({ target: seriesName, datapoints: datapoints });
     });
 
     return output;
@@ -166,8 +182,6 @@ function (_, TableModel) {
           rows.datapoints.push(reordered);
         });
     });
-
-    console.log(rows);
 
     return rows;
   };

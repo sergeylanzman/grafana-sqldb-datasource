@@ -21,6 +21,7 @@ export declare class SqlQueryCtrl extends QueryCtrl {
     constructor($scope: any, $injector: any, templateSrv: any, $q: any, uiSegmentSrv: any);
     setDefault(): void;
     buildSelectMenu(): void;
+    getGroupByOptions(part: any): any;
     groupByAction(): void;
     removeGroupByPart(part: any, index: any): void;
     addSelectPart(selectParts: any, cat: any, subitem: any): void;
