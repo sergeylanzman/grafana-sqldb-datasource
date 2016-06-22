@@ -376,33 +376,33 @@ export default class SqlDatasource {
 
     var parts = /^(\d+)([a-z]*)$/.exec(str);
     if (parts) {
-      var amount = parseInt(parts[1]);
+      var second = parseInt(parts[1]);
       var unit = parts[2];
 
       // cast to seconds
       switch (unit) {
         case 'ms':
-          rtn = amount / 1000;
+          rtn = second / 1000;
           break;
 
         case 'm':
-          rtn = amount * 60;
+          rtn = second * 60;
           break;
 
         case 'h':
-          rtn = amount * 60 * 12;
+          rtn = second * 60 * 60;
           break;
 
         case 'd':
-          rtn = amount * 60 * 12 * 24;
+          rtn = second * 60 * 60 * 24;
           break;
 
         case 'w':
-          rtn = amount * 60 * 12 * 24 * 7;
+          rtn = second * 60 * 60 * 24 * 7;
           break;
 
         default: // "s"
-          rtn = amount;
+          rtn = second;
       }
     }
 
