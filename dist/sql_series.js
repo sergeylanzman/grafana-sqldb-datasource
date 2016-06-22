@@ -18,7 +18,6 @@ function (_, TableModel) {
   p.getTimeSeries = function() {
     var output = [];
     var self = this;
-    var i, j;
 
     if (self.series.length === 0) {
       return output;
@@ -34,15 +33,13 @@ function (_, TableModel) {
 
         _.each(row, function(value, i) {
           if (i < self.groupBy.length) {
-            if (! tagsStr) {
-              for (j = 0; j < self.groupBy.length; j++) {
-                if (j !== 0) {
-                  tags.push(row[j]);
-                }
+            _.each(self.groupBy, function(groupBy, k) {
+              if (k !== 0) {
+                tags.push(groupBy.params[0] + ': ' + row[k]);
               }
-              if (tags.length !== 0) {
-                tagsStr = ' {' + tags.join(', ') + '}';
-              }
+            });
+            if (tags.length !== 0) {
+              tagsStr = ' {' + tags.join(', ') + '}';
             }
 
           } else {
@@ -71,6 +68,8 @@ function (_, TableModel) {
     _.each(seriesDatapoints, function(datapoints, seriesName) {
       output.push({ target: seriesName, datapoints: datapoints });
     });
+
+    console.log(output);
 
     return output;
   };
