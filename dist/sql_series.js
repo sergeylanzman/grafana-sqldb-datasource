@@ -30,37 +30,36 @@ function (_, TableModel) {
       _.each(series.values, function(row) {
         var tags = [];
         var tagsStr = '';
+        _.each(self.groupBy, function(groupBy, k) {
+          if (k !== 0) {
+            tags.push(groupBy.params[0] + ': ' + row[k]);
+          }
+        });
+        if (tags.length !== 0) {
+          tagsStr = ' {' + tags.join(', ') + '}';
+        }
 
         _.each(row, function(value, i) {
           if (i < self.groupBy.length) {
-            _.each(self.groupBy, function(groupBy, k) {
-              if (k !== 0) {
-                tags.push(groupBy.params[0] + ': ' + row[k]);
-              }
-            });
-            if (tags.length !== 0) {
-              tagsStr = ' {' + tags.join(', ') + '}';
-            }
-
-          } else {
-            var columnName = series.columns[i];
-            if (columnName !== 'value') {
-              seriesName = seriesName + '.' + columnName;
-            }
-            if (self.alias) {
-              seriesName = self._getSeriesName(series, i);
-            }
-            seriesName = seriesName + tagsStr;
-
-            if (! seriesDatapoints[seriesName]) {
-              seriesDatapoints[seriesName] = [];
-            }
-
-            seriesDatapoints[seriesName].push([
-              self._formatValue(value),   // numeric value
-              self._formatValue(row[0])   // timestamp
-            ]);
+              return;
           }
+          var columnName = series.columns[i];
+          if (columnName !== 'value') {
+            seriesName = seriesName + '.' + columnName;
+          }
+          if (self.alias) {
+            seriesName = self._getSeriesName(series, i);
+          }
+          seriesName = seriesName + tagsStr;
+
+          if (! seriesDatapoints[seriesName]) {
+            seriesDatapoints[seriesName] = [];
+          }
+
+          seriesDatapoints[seriesName].push([
+            self._formatValue(value),   // numeric value
+            self._formatValue(row[0])   // timestamp
+          ]);
         });
       });
     });
