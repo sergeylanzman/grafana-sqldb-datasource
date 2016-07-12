@@ -63,7 +63,7 @@ export default class SqlDatasource {
     allQueries = this.templateSrv.replace(allQueries, options.scopedVars);
 
     return this._seriesQuery(allQueries).then((data): any => {
-      if (!data || !data.results) {
+      if (!data || !data.results || queryTargets.length === 0) {
         return [];
       }
 

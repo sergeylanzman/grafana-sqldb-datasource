@@ -61,7 +61,7 @@ System.register(['lodash', 'app/core/utils/datemath', './sql_series', './sql_que
                     }).join(";");
                     allQueries = this.templateSrv.replace(allQueries, options.scopedVars);
                     return this._seriesQuery(allQueries).then(function (data) {
-                        if (!data || !data.results) {
+                        if (!data || !data.results || queryTargets.length === 0) {
                             return [];
                         }
                         var seriesList = [];

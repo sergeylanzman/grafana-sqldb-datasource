@@ -69,8 +69,6 @@ function (_, TableModel) {
       output.push({ target: seriesName, datapoints: datapoints });
     });
 
-    console.log(output);
-
     return output;
   };
 

@@ -203,7 +203,7 @@ export default class SqlQuery {
         switch (groupBy.type) {
           case 'time':
             query += '$unixtimeColumn * 1000 AS time_msec';
-            groupByClause = '$unixtimeColumn'
+            groupByClause = '$unixtimeColumn * 1000'
             break;
 
           case 'tag':
