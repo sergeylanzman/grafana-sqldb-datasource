@@ -147,7 +147,7 @@ export default class SqlQuery {
       if (operator !== '>' && operator !== '<') {
         value = "'" + value.replace('\\', '\\\\') + "'";
       }
-    } else if (interpolate){
+    } else {
       value = this.templateSrv.replace(value, this.scopedVars, 'regex');
       value = "'" + value.replace(/^\//, '').replace(/\/$/, '') + "'";
     }

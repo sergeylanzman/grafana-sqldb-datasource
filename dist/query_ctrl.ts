@@ -33,6 +33,7 @@ export class SqlQueryCtrl extends QueryCtrl {
     this.matchOperators = queryPart.getMatchOperators(this.datasource.dbms);
 
     this.queryModel = new SqlQuery(this.target, templateSrv, this.panel.scopedVars);
+    this.queryModel.dbms = this.datasource.dbms;
     this.queryBuilder = new SqlQueryBuilder(this.target, { matchOperators: this.matchOperators });
 
     this.resultFormats = [

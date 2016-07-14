@@ -134,7 +134,7 @@ System.register(['lodash', './query_part'], function(exports_1) {
                             value = "'" + value.replace('\\', '\\\\') + "'";
                         }
                     }
-                    else if (interpolate) {
+                    else {
                         value = this.templateSrv.replace(value, this.scopedVars, 'regex');
                         value = "'" + value.replace(/^\//, '').replace(/\/$/, '') + "'";
                     }

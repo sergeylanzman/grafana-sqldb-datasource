@@ -40,6 +40,7 @@ System.register(['./query_part_editor', 'angular', 'lodash', './query_builder', 
                     this.target = this.target;
                     this.matchOperators = query_part_1.default.getMatchOperators(this.datasource.dbms);
                     this.queryModel = new sql_query_1.default(this.target, templateSrv, this.panel.scopedVars);
+                    this.queryModel.dbms = this.datasource.dbms;
                     this.queryBuilder = new query_builder_1.default(this.target, { matchOperators: this.matchOperators });
                     this.resultFormats = [
                         { text: 'Time series', value: 'time_series' },
