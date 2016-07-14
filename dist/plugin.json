@@ -3,6 +3,10 @@
   "name": "SqlDB",
   "id": "sqldb",
 
+  "defaultMatchFormat": "regex values",
+  "metrics": true,
+  "annotations": true,
+
   "info": {
     "description": "SqlDB data source for grafana",
     "author": {
