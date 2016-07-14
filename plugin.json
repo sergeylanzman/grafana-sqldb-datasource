@@ -1,7 +1,7 @@
 {
   "type": "datasource",
   "name": "SqlDB",
-  "id": "grafana-sqldb-datasource",
+  "id": "sqldb",
 
   "info": {
     "description": "SqlDB data source for grafana",
