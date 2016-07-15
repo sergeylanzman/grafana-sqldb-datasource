@@ -36,7 +36,8 @@ function (_) {
     var table;
 
     var colType = (this.dbms === 'postgres') ?
-      'column_name || data_type' : 'concat(column_name, \' : \', data_type)';
+      'column_name || \' : \' || data_type' :
+      'concat(column_name, \' : \', data_type)';
 
     if (type === 'TAG_KEYS') {
       query = 'SELECT column_name ' +
