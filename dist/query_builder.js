@@ -4,8 +4,9 @@ define([
 function (_) {
   'use strict';
 
-  function SqlQueryBuilder(target) {
+  function SqlQueryBuilder(target, dbms) {
     this.target = target;
+    this.dbms = dbms;
   }
 
   function renderTagCondition (tag, index) {
@@ -34,6 +35,9 @@ function (_) {
     var query;
     var table;
 
+    var colType = (this.dbms === 'postgres') ?
+      'column_name || data_type' : 'concat(column_name, \' : \', data_type)';
+
     if (type === 'TAG_KEYS') {
       query = 'SELECT column_name ' +
               'FROM information_schema.columns ' +
@@ -56,7 +60,7 @@ function (_) {
       return query;
 
     } else if (type === 'FIELDS') {
-      query = 'SELECT concat(column_name, \' : \', data_type)' +
+      query = 'SELECT ' + colType + ' ' +
               'FROM information_schema.columns ' +
               'WHERE table_schema = \'' + this.target.schema + '\' AND ' +
                     'table_name = \'' + this.target.table + '\' ' +
@@ -75,7 +79,7 @@ function (_) {
                          "'double', 'double precision', 'float'";
 
       query = 'SELECT table_schema, table_name, ' +
-                     'concat(column_name, \' : \', data_type) ' +
+                      colType + ' ' +
               'FROM information_schema.columns ' +
               'WHERE table_schema NOT IN (' + exceptSchemaArr + ') ' +
               'ORDER BY (data_type LIKE \'timestamp%\') desc, ' +

@@ -34,7 +34,9 @@ export class SqlQueryCtrl extends QueryCtrl {
 
     this.queryModel = new SqlQuery(this.target, templateSrv, this.panel.scopedVars);
     this.queryModel.dbms = this.datasource.dbms;
-    this.queryBuilder = new SqlQueryBuilder(this.target, { matchOperators: this.matchOperators });
+    this.queryBuilder = new SqlQueryBuilder(
+      this.target, this.datasource.dbms, { matchOperators: this.matchOperators }
+    );
 
     this.resultFormats = [
       {text: 'Time series', value: 'time_series'},
