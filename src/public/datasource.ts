@@ -173,9 +173,20 @@ export default class SqlDatasource {
   }
 
   testDatasource() {
-    return this.metricFindQuery('SELECT 1 AS num').then(() => {
-      return { status: "success", message: "Data source is working", title: "Success" };
-    });
+    return this.metricFindQuery('SELECT 1 AS num').then(
+      (result) => {
+        return { status: "success", message: "Data source is working", title: "Success" };
+      },
+      (error) => {
+        var errorMessage = error.data.message;
+        if (errorMessage.indexOf('connection refused') !== -1) {
+          errorMessage = 'Connection error: Could not connect the database';
+        } else if (errorMessage.indexOf('Access denied') !== -1) {
+          errorMessage = 'Authentication error: Invalid user name or password';
+        }
+
+        return { status: "error", message: errorMessage, title: "Error" };
+      });
   }
 
   _sqlRequest(method, url, data) {
