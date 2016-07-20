@@ -65,40 +65,42 @@ System.register(['lodash', 'app/core/utils/datemath', './sql_series', './sql_que
                             return [];
                         }
                         var seriesList = [];
-                        for (i = 0; i < data.results.length; i++) {
-                            var result = data.results[i];
+                        lodash_1.default.each(data.results, function (result, i) {
                             if (!result || !result.series) {
-                                continue;
+                                return;
                             }
-                            var target = queryTargets[i];
-                            var alias = target.alias;
-                            if (alias) {
-                                alias = _this.templateSrv.replace(target.alias, options.scopedVars);
-                            }
-                            var sqlSeries = new sql_series_1.default({
-                                series: data.results[i].series,
-                                table: target.table,
-                                alias: alias,
-                                groupBy: target.groupBy
+                            lodash_1.default.each(result.series, function (series, j) {
+                                var target = queryTargets[j];
+                                var alias = target.alias;
+                                if (alias) {
+                                    alias = _this.templateSrv.replace(target.alias, options.scopedVars);
+                                }
+                                var sqlSeries = new sql_series_1.default({
+                                    series: series,
+                                    table: target.table,
+                                    alias: alias,
+                                    groupBy: target.groupBy
+                                });
+                                switch (target.resultFormat) {
+                                    case 'table':
+                                        if (j > 0) {
+                                            return;
+                                        }
+                                        seriesList = seriesList.concat(sqlSeries.getTable());
+                                        break;
+                                    case 'docs':
+                                        if (j > 0) {
+                                            return;
+                                        }
+                                        seriesList = seriesList.concat(sqlSeries.getDocs());
+                                        break;
+                                    default:
+                                        seriesList = seriesList.concat(sqlSeries.getTimeSeries());
+                                        break;
+                                }
                             });
-                            switch (target.resultFormat) {
-                                case 'table': {
-                                    seriesList.push(sqlSeries.getTable());
-                                    break;
-                                }
-                                case 'docs': {
-                                    seriesList.push(sqlSeries.getDocs());
-                                    break;
-                                }
-                                default: {
-                                    var timeSeries = sqlSeries.getTimeSeries();
-                                    for (y = 0; y < timeSeries.length; y++) {
-                                        seriesList.push(timeSeries[y]);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
+                        });
+                        console.log(seriesList);
                         return { data: seriesList };
                     });
                 };

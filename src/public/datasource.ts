@@ -68,44 +68,44 @@ export default class SqlDatasource {
       }
 
       var seriesList = [];
-      for (i = 0; i < data.results.length; i++) {
-        var result = data.results[i];
-        if (!result || !result.series) { continue; }
+      _.each(data.results, (result, i) => {
+        if (!result || !result.series) { return; }
 
-        var target = queryTargets[i];
-        var alias = target.alias;
-        if (alias) {
-          alias = this.templateSrv.replace(target.alias, options.scopedVars);
-        }
+        _.each(result.series, (series, j) => {
+          var target = queryTargets[j];
 
-        var sqlSeries = new SqlSeries({
-          series: data.results[i].series,
-          table:  target.table,
-          alias:  alias,
-          groupBy: target.groupBy
+          var alias = target.alias;
+          if (alias) {
+            alias = this.templateSrv.replace(target.alias, options.scopedVars);
+          }
+
+          var sqlSeries = new SqlSeries({
+            series:  series,
+            table:   target.table,
+            alias:   alias,
+            groupBy: target.groupBy
+          });
+
+          switch (target.resultFormat) {
+          case 'table':
+            if (j > 0) { return; }
+            seriesList = seriesList.concat(sqlSeries.getTable());
+            break;
+
+          case 'docs':
+            if (j > 0) { return; }
+            seriesList = seriesList.concat(sqlSeries.getDocs());
+            break;
+
+          default:
+            seriesList = seriesList.concat(sqlSeries.getTimeSeries());
+            break;
+          }
+
         });
+      });
 
-        switch (target.resultFormat) {
-          case 'table': {
-            seriesList.push(sqlSeries.getTable());
-            break;
-          }
-
-          case 'docs': {
-            seriesList.push(sqlSeries.getDocs());
-            break;
-          }
-
-          default: {
-            var timeSeries = sqlSeries.getTimeSeries();
-            for (y = 0; y < timeSeries.length; y++) {
-              seriesList.push(timeSeries[y]);
-            }
-            break;
-          }
-        }
-      }
-
+      console.log(seriesList);
       return { data: seriesList };
     });
   };

@@ -15,6 +15,7 @@ function (_, TableModel) {
 
   var p = SqlSeries.prototype;
 
+
   p.getTimeSeries = function() {
     var output = [];
     var self = this;
@@ -26,41 +27,39 @@ function (_, TableModel) {
     var seriesName = self.table;
 
     var seriesDatapoints = {};
-    _.each(self.series, function(series) {
-      _.each(series.values, function(row) {
-        var tags = [];
-        var tagsStr = '';
-        _.each(self.groupBy, function(groupBy, k) {
-          if (k !== 0) {
-            tags.push(groupBy.params[0] + ': ' + row[k]);
-          }
-        });
-        if (tags.length !== 0) {
-          tagsStr = ' {' + tags.join(', ') + '}';
+    _.each(self.series.values, function(row) {
+      var tags = [];
+      var tagsStr = '';
+      _.each(self.groupBy, function(groupBy, k) {
+        if (k !== 0) {
+          tags.push(groupBy.params[0] + ': ' + row[k]);
+        }
+      });
+      if (tags.length !== 0) {
+        tagsStr = ' {' + tags.join(', ') + '}';
+      }
+
+      _.each(row, function(value, i) {
+        if (i < self.groupBy.length) {
+            return;
+        }
+        var columnName = self.series.columns[i];
+        if (columnName !== 'value') {
+          seriesName = seriesName + '.' + columnName;
+        }
+        if (self.alias) {
+          seriesName = self._getSeriesName(self.series, i);
+        }
+        seriesName = seriesName + tagsStr;
+
+        if (! seriesDatapoints[seriesName]) {
+          seriesDatapoints[seriesName] = [];
         }
 
-        _.each(row, function(value, i) {
-          if (i < self.groupBy.length) {
-              return;
-          }
-          var columnName = series.columns[i];
-          if (columnName !== 'value') {
-            seriesName = seriesName + '.' + columnName;
-          }
-          if (self.alias) {
-            seriesName = self._getSeriesName(series, i);
-          }
-          seriesName = seriesName + tagsStr;
-
-          if (! seriesDatapoints[seriesName]) {
-            seriesDatapoints[seriesName] = [];
-          }
-
-          seriesDatapoints[seriesName].push([
-            self._formatValue(value),   // numeric value
-            self._formatValue(row[0])   // timestamp
-          ]);
-        });
+        seriesDatapoints[seriesName].push([
+          self._formatValue(value),   // numeric value
+          self._formatValue(row[0])   // timestamp
+        ]);
       });
     });
 
@@ -122,41 +121,17 @@ function (_, TableModel) {
   p.getTable = function() {
     var table = new TableModel.default();
     var self = this;
-    var i, j;
 
-    if (self.series.length === 0) {
-      return table;
-    }
+    _.each(self.series.columns, function(column) {
+      table.columns.push({ text: column });
+    });
 
-    _.each(self.series, function(series, seriesIndex) {
+    _.each(self.series.values, function(row) {
+      var formated = _.map(row, function(value) {
+        return self._formatValue(value);
+      });
 
-      if (seriesIndex === 0) {
-        table.columns.push({text: 'Time', type: 'time'});
-        _.each(_.keys(series.tags), function(key) {
-          table.columns.push({text: key});
-        });
-        for (j = 1; j < series.columns.length; j++) {
-          table.columns.push({text: series.columns[j]});
-        }
-      }
-
-      if (series.values) {
-        for (i = 0; i < series.values.length; i++) {
-          var values = series.values[i];
-          var reordered = [self._formatValue(values[0])];
-          if (series.tags) {
-            for (var key in series.tags) {
-              if (series.tags.hasOwnProperty(key)) {
-                reordered.push(series.tags[key]);
-              }
-            }
-          }
-          for (j = 1; j < values.length; j++) {
-            reordered.push(self._formatValue(values[j]));
-          }
-          table.rows.push(reordered);
-        }
-      }
+      table.rows.push(formated);
     });
 
     return table;
@@ -164,19 +139,17 @@ function (_, TableModel) {
 
   p.getDocs = function() {
     var self = this;
-    var rows = { datapoints: [], target: self.series[0].name, type: 'docs' };
+    var rows = { datapoints: [], target: self.series.name, type: 'docs' };
 
-    _.each(self.series, function(series, seriesIndex) {
-        _.each(series.values, function(values) {
-          var reordered = {};
+    _.each(self.series.values, function(values) {
+      var formated = {};
 
-          _.each(values, function(value, i) {
-            var column = series.columns[i];
-            reordered[column] = self._formatValue(value);
-          });
+      _.each(values, function(value, i) {
+        var column = self.series.columns[i];
+        formated[column] = self._formatValue(value);
+      });
 
-          rows.datapoints.push(reordered);
-        });
+      rows.datapoints.push(formated);
     });
 
     return rows;
