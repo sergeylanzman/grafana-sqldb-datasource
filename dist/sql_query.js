@@ -134,8 +134,11 @@ System.register(['lodash', './query_part'], function(exports_1) {
                             value = "'" + value.replace('\\', '\\\\') + "'";
                         }
                     }
-                    else {
+                    else if (interpolate) {
                         value = this.templateSrv.replace(value, this.scopedVars, 'regex');
+                        value = "'" + value.replace(/^\//, '').replace(/\/$/, '') + "'";
+                    }
+                    else {
                         value = "'" + value.replace(/^\//, '').replace(/\/$/, '') + "'";
                     }
                     return str + tag.key + ' ' + operator + ' ' + value;
