@@ -17,6 +17,9 @@ export declare class SqlQueryCtrl extends QueryCtrl {
     tableSegment: any;
     removeTagFilterSegment: any;
     matchOperators: any;
+    panel: any;
+    datasource: any;
+    target: any;
     /** @ngInject **/
     constructor($scope: any, $injector: any, templateSrv: any, $q: any, uiSegmentSrv: any);
     setDefault(): void;

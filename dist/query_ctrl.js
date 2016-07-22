@@ -78,13 +78,9 @@ System.register(['./query_part_editor', 'angular', 'lodash', './query_builder', 
                     this.fixTagSegments();
                     this.buildSelectMenu();
                     this.removeTagFilterSegment = uiSegmentSrv.newSegment({ fake: true, value: '-- remove tag filter --' });
-                    /*
-                     TODO:
-                     This doen't work well when trying to change a parameter from the default value put by setDefault().
                     if (this.target.isNew) {
-                      this.setDefault();
+                        this.setDefault();
                     }
-                    */
                 }
                 SqlQueryCtrl.prototype.setDefault = function () {
                     var _this = this;

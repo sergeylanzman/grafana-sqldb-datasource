@@ -23,6 +23,9 @@ export class SqlQueryCtrl extends QueryCtrl {
   tableSegment: any;
   removeTagFilterSegment: any;
   matchOperators: any;
+  panel: any;
+  datasource: any;
+  target: any;
 
   /** @ngInject **/
   constructor($scope, $injector, private templateSrv, private $q, private uiSegmentSrv) {
@@ -79,13 +82,9 @@ export class SqlQueryCtrl extends QueryCtrl {
     this.buildSelectMenu();
     this.removeTagFilterSegment = uiSegmentSrv.newSegment({fake: true, value: '-- remove tag filter --'});
 
-    /*
-     TODO:
-     This doen't work well when trying to change a parameter from the default value put by setDefault().
     if (this.target.isNew) {
       this.setDefault();
     }
-    */
   }
 
   setDefault() {
