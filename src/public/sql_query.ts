@@ -19,9 +19,9 @@ export default class SqlQuery {
     this.templateSrv = templateSrv;
     this.scopedVars = scopedVars;
 
-    target.schema = target.schema || 'default';
+    target.schema = target.schema;
     target.dsType = 'sqldb';
-    target.timeColDataType = target.timeColDataType || 'time : type';
+    target.timeColDataType = target.timeColDataType;
     target.resultFormat = target.resultFormat || 'time_series';
     target.tags = target.tags || [];
     target.groupBy = target.groupBy || [

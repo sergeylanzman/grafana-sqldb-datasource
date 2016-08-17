@@ -47,14 +47,9 @@ System.register(['./query_part_editor', 'angular', 'lodash', './query_builder', 
                         { text: 'Table', value: 'table' },
                         { text: 'Docs', value: 'docs' },
                     ];
-                    this.schemaSegment = uiSegmentSrv.newSegment(this.target.schema);
-                    if (!this.target.table) {
-                        this.tableSegment = uiSegmentSrv.newSelectMeasurement();
-                    }
-                    else {
-                        this.tableSegment = uiSegmentSrv.newSegment(this.target.table);
-                    }
-                    this.timeColDataTypeSegment = uiSegmentSrv.newSegment(this.target.timeColDataType);
+                    this.schemaSegment = uiSegmentSrv.newSegment(this.target.schema || { fake: true, value: '-- schema --' });
+                    this.tableSegment = uiSegmentSrv.newSegment(this.target.table || { fake: true, value: '-- table --' });
+                    this.timeColDataTypeSegment = uiSegmentSrv.newSegment(this.target.timeColDataType || { fake: true, value: '-- time : type --' });
                     this.tagSegments = [];
                     for (var _i = 0, _a = this.target.tags; _i < _a.length; _i++) {
                         var tag = _a[_i];
@@ -77,27 +72,26 @@ System.register(['./query_part_editor', 'angular', 'lodash', './query_builder', 
                     //this.fixGroupBySegments();
                     this.fixTagSegments();
                     this.buildSelectMenu();
-                    this.removeTagFilterSegment = uiSegmentSrv.newSegment({ fake: true, value: '-- remove tag filter --' });
-                    if (this.target.isNew) {
-                        this.setDefault();
-                    }
-                }
-                SqlQueryCtrl.prototype.setDefault = function () {
-                    var _this = this;
-                    var query = this.queryBuilder.buildExploreQuery('SET_DEFAULT');
-                    this.datasource._seriesQuery(query).then(function (data) {
-                        if (!data.results[0].series[0].values) {
-                            return;
-                        }
-                        var result = data.results[0].series[0].values[0];
-                        _this.target.schema = result[0];
-                        _this.target.table = result[1];
-                        _this.target.timeColDataType = result[2];
-                        _this.schemaSegment = _this.uiSegmentSrv.newSegment(_this.target.schema);
-                        _this.tableSegment = _this.uiSegmentSrv.newSegment(_this.target.table);
-                        _this.timeColDataTypeSegment = _this.uiSegmentSrv.newSegment(_this.target.timeColDataType);
+                    this.removeTagFilterSegment = uiSegmentSrv.newSegment({
+                        fake: true, value: '-- remove tag filter --'
                     });
-                };
+                }
+                /*
+                setDefault() {
+                  var query = this.queryBuilder.buildExploreQuery('SET_DEFAULT');
+                  this.datasource._seriesQuery(query).then(data => {
+                    if (!data.results[0].series[0].values) { return; }
+                    var result = data.results[0].series[0].values[0];
+                    this.target.schema          = result[0];
+                    this.target.table           = result[1];
+                    this.target.timeColDataType = result[2];
+              
+                    this.schemaSegment = this.uiSegmentSrv.newSegment(this.target.schema);
+                    this.tableSegment = this.uiSegmentSrv.newSegment(this.target.table);
+                    this.timeColDataTypeSegment = this.uiSegmentSrv.newSegment(this.target.timeColDataType);
+                  });
+                }
+                */
                 SqlQueryCtrl.prototype.buildSelectMenu = function () {
                     var categories = query_part_1.default.getCategories();
                     this.selectMenu = lodash_1.default.reduce(categories, function (memo, cat, key) {

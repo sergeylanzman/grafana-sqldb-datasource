@@ -22,7 +22,6 @@ export declare class SqlQueryCtrl extends QueryCtrl {
     target: any;
     /** @ngInject **/
     constructor($scope: any, $injector: any, templateSrv: any, $q: any, uiSegmentSrv: any);
-    setDefault(): void;
     buildSelectMenu(): void;
     getGroupByOptions(part: any): any;
     groupByAction(): void;

@@ -47,15 +47,17 @@ export class SqlQueryCtrl extends QueryCtrl {
       {text: 'Docs', value: 'docs'},
     ];
 
-    this.schemaSegment = uiSegmentSrv.newSegment(this.target.schema);
+    this.schemaSegment = uiSegmentSrv.newSegment(
+      this.target.schema || {fake: true, value: '-- schema --'}
+    );
 
-    if (!this.target.table) {
-      this.tableSegment = uiSegmentSrv.newSelectMeasurement();
-    } else {
-      this.tableSegment = uiSegmentSrv.newSegment(this.target.table);
-    }
+    this.tableSegment = uiSegmentSrv.newSegment(
+      this.target.table || {fake: true, value: '-- table --'}
+    );
 
-    this.timeColDataTypeSegment = uiSegmentSrv.newSegment(this.target.timeColDataType);
+    this.timeColDataTypeSegment = uiSegmentSrv.newSegment(
+      this.target.timeColDataType || {fake: true, value: '-- time : type --'}
+    );
 
     this.tagSegments = [];
     for (let tag of this.target.tags) {
@@ -80,13 +82,12 @@ export class SqlQueryCtrl extends QueryCtrl {
     //this.fixGroupBySegments();
     this.fixTagSegments();
     this.buildSelectMenu();
-    this.removeTagFilterSegment = uiSegmentSrv.newSegment({fake: true, value: '-- remove tag filter --'});
-
-    if (this.target.isNew) {
-      this.setDefault();
-    }
+    this.removeTagFilterSegment = uiSegmentSrv.newSegment({
+      fake: true, value: '-- remove tag filter --'
+    });
   }
 
+  /*
   setDefault() {
     var query = this.queryBuilder.buildExploreQuery('SET_DEFAULT');
     this.datasource._seriesQuery(query).then(data => {
@@ -101,6 +102,7 @@ export class SqlQueryCtrl extends QueryCtrl {
       this.timeColDataTypeSegment = this.uiSegmentSrv.newSegment(this.target.timeColDataType);
     });
   }
+  */
 
   buildSelectMenu() {
     var categories = queryPart.getCategories();
