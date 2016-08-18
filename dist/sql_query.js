@@ -185,13 +185,14 @@ System.register(['lodash', './query_part'], function(exports_1) {
                             switch (groupBy.type) {
                                 case 'time':
                                     query += '$unixtimeColumn * 1000 AS time_msec';
-                                    groupByClause = '$unixtimeColumn * 1000';
                                     break;
                                 case 'tag':
                                     query += groupBy.params[0];
-                                    groupByClause += groupBy.params[0];
                                     break;
+                                default:
+                                    return;
                             }
+                            groupByClause += (i + 1);
                         });
                         query += ', ';
                     }
