@@ -60,11 +60,14 @@ export default class SqlDatasource {
 
     }).join(";");
 
+    if (!allQueries) {
+        return { data: [] };
+    }
     allQueries = this.templateSrv.replace(allQueries, options.scopedVars);
 
     return this._seriesQuery(allQueries).then((data): any => {
       if (!data || !data.results || queryTargets.length === 0) {
-        return [];
+        return { data: [] };
       }
 
       var seriesList = [];

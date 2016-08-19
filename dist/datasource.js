@@ -59,10 +59,13 @@ System.register(['lodash', 'app/core/utils/datemath', './sql_series', './sql_que
                         query = _this._replaceQueryVars(query, options, target);
                         return query;
                     }).join(";");
+                    if (!allQueries) {
+                        return { data: [] };
+                    }
                     allQueries = this.templateSrv.replace(allQueries, options.scopedVars);
                     return this._seriesQuery(allQueries).then(function (data) {
                         if (!data || !data.results || queryTargets.length === 0) {
-                            return [];
+                            return { data: [] };
                         }
                         var seriesList = [];
                         lodash_1.default.each(data.results, function (result, i) {
