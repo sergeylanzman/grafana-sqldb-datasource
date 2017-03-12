@@ -100,16 +100,16 @@ function addMathStrategy(selectParts, partModel) {
   var partCount = selectParts.length;
   if (partCount > 0) {
     // if last is math, replace it
-    if (selectParts[partCount-1].def.type === 'math') {
-      selectParts[partCount-1] = partModel;
+    if (selectParts[partCount - 1].def.type === 'math') {
+      selectParts[partCount - 1] = partModel;
       return;
     }
     // if next to last is math, replace it
-    if (selectParts[partCount-2].def.type === 'math') {
-      selectParts[partCount-2] = partModel;
+    if (selectParts[partCount - 2].def.type === 'math') {
+      selectParts[partCount - 2] = partModel;
       return;
-    } else if (selectParts[partCount-1].def.type === 'alias') { // if last is alias add it before
-      selectParts.splice(partCount-1, 0, partModel);
+    } else if (selectParts[partCount - 1].def.type === 'alias') { // if last is alias add it before
+      selectParts.splice(partCount - 1, 0, partModel);
       return;
     }
   }
@@ -120,8 +120,8 @@ function addAliasStrategy(selectParts, partModel) {
   var partCount = selectParts.length;
   if (partCount > 0) {
     // if last is alias, replace it
-    if (selectParts[partCount-1].def.type === 'alias') {
-      selectParts[partCount-1] = partModel;
+    if (selectParts[partCount - 1].def.type === 'alias') {
+      selectParts[partCount - 1] = partModel;
       return;
     }
   }
@@ -130,7 +130,7 @@ function addAliasStrategy(selectParts, partModel) {
 
 function addFieldStrategy(selectParts, partModel, query) {
   // copy all parts
-  var parts = _.map(selectParts, function(part: any) {
+  var parts = _.map(selectParts, function (part: any) {
     return new QueryPart({type: part.def.type, params: _.clone(part.params)});
   });
 
@@ -179,7 +179,7 @@ QueryPartDef.register({
 QueryPartDef.register({
   type: 'time',
   category: groupByTimeFunctions,
-  params: [{ name: "interval", type: "time", options: ['auto', '1s', '10s', '1m', '5m', '10m', '15m', '1h'] }],
+  params: [{name: "interval", type: "time", options: ['auto', '1s', '10s', '1m', '5m', '10m', '15m', '1h']}],
   defaultParams: ['auto'],
   renderer: functionRenderer,
 });
@@ -216,7 +216,7 @@ QueryPartDef.register({
   type: 'math',
   addStrategy: addMathStrategy,
   category: categories.Math,
-  params: [{ name: "expr", type: "string"}],
+  params: [{name: "expr", type: "string"}],
   defaultParams: [' / 100'],
   renderer: suffixRenderer,
 });
@@ -225,7 +225,7 @@ QueryPartDef.register({
   type: 'alias',
   addStrategy: addAliasStrategy,
   category: categories.Aliasing,
-  params: [{ name: "name", type: "string", quote: 'double'}],
+  params: [{name: "name", type: "string", quote: 'double'}],
   defaultParams: ['alias'],
   renderMode: 'suffix',
   renderer: aliasRenderer,
@@ -253,7 +253,7 @@ class QueryPart {
     return this.def.renderer(this, innerExpr);
   }
 
-  hasMultipleParamsInString (strValue, index) {
+  hasMultipleParamsInString(strValue, index) {
     if (strValue.indexOf(',') === -1) {
       return false;
     }
@@ -261,11 +261,11 @@ class QueryPart {
     return this.def.params[index + 1] && this.def.params[index + 1].optional;
   }
 
-  updateParam (strValue, index) {
+  updateParam(strValue, index) {
     // handle optional parameters
     // if string contains ',' and next param is optional, split and update both
     if (this.hasMultipleParamsInString(strValue, index)) {
-      _.each(strValue.split(','), function(partVal: string, idx) {
+      _.each(strValue.split(','), function (partVal: string, idx) {
         this.updateParam(partVal.trim(), idx);
       }, this);
       return;
@@ -295,26 +295,27 @@ class QueryPart {
 }
 
 export default {
-  create: function(part): any {
+  create: function (part): any {
     return new QueryPart(part);
   },
 
-  getCategories: function() {
+  getCategories: function () {
     return categories;
   },
 
-  getMatchOperators: function(dbms) {
+  getMatchOperators: function (dbms) {
     var rtn = null;
     switch (dbms) {
       case 'postgres':
-        rtn = { 'match': '~*', 'not': '!~*' };
+        rtn = {'match': '~*', 'not': '!~*'};
         break;
       case 'mysql':
-        rtn = { 'match': 'REGEXP', 'not': 'NOT REGEXP' };
+        rtn = {'match': 'REGEXP', 'not': 'NOT REGEXP'};
         break;
       default:
         break;
-    };
+    }
+    ;
 
     return rtn;
   },

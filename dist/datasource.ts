@@ -43,8 +43,12 @@ export default class SqlDatasource {
     var i, y;
 
     var allQueries = _.map(options.targets, (target) => {
-      if (target.hide) { return []; }
-      if (target.timeColDataType === undefined) { return []; }
+      if (target.hide) {
+        return [];
+      }
+      if (target.timeColDataType === undefined) {
+        return [];
+      }
 
       queryTargets.push(target);
       var arr = target.timeColDataType.split(':');
@@ -53,7 +57,7 @@ export default class SqlDatasource {
 
       var queryModel = new SqlQuery(target, this.templateSrv, options.scopedVars);
       queryModel.dbms = this.dbms;
-      var query =  queryModel.render(true);
+      var query = queryModel.render(true);
       query = this._replaceQueryVars(query, options, target);
 
       return query;
@@ -61,18 +65,20 @@ export default class SqlDatasource {
     }).join(";");
 
     if (!allQueries) {
-        return { data: [] };
+      return {data: []};
     }
     allQueries = this.templateSrv.replace(allQueries, options.scopedVars);
 
     return this._seriesQuery(allQueries).then((data): any => {
       if (!data || !data.results || queryTargets.length === 0) {
-        return { data: [] };
+        return {data: []};
       }
 
       var seriesList = [];
       _.each(data.results, (result, i) => {
-        if (!result || !result.series) { return; }
+        if (!result || !result.series) {
+          return;
+        }
 
         _.each(result.series, (series, j) => {
           var target = queryTargets[j];
@@ -83,33 +89,37 @@ export default class SqlDatasource {
           }
 
           var sqlSeries = new SqlSeries({
-            series:  series,
-            table:   target.table,
-            alias:   alias,
+            series: series,
+            table: target.table,
+            alias: alias,
             groupBy: target.groupBy
           });
 
           switch (target.resultFormat) {
-          case 'table':
-            if (j > 0) { return; }
-            seriesList = seriesList.concat(sqlSeries.getTable());
-            break;
+            case 'table':
+              if (j > 0) {
+                return;
+              }
+              seriesList = seriesList.concat(sqlSeries.getTable());
+              break;
 
-          case 'docs':
-            if (j > 0) { return; }
-            seriesList = seriesList.concat(sqlSeries.getDocs());
-            break;
+            case 'docs':
+              if (j > 0) {
+                return;
+              }
+              seriesList = seriesList.concat(sqlSeries.getDocs());
+              break;
 
-          default:
-            seriesList = seriesList.concat(sqlSeries.getTimeSeries());
-            break;
+            default:
+              seriesList = seriesList.concat(sqlSeries.getTimeSeries());
+              break;
           }
 
         });
       });
 
       console.log(seriesList);
-      return { data: seriesList };
+      return {data: seriesList};
     });
   };
 
@@ -126,13 +136,13 @@ export default class SqlDatasource {
       castTimeCol += ' * 1000';
 
       options.annotation.query =
-          'SELECT ' +
-          castTimeCol + ' AS "time", ' +
-          (options.annotation.tags || 'NULL') + ' AS "tags", ' +
-          (options.annotation.title || 'NULL') + ' AS "title", ' +
-          (options.annotation.text || 'NULL') + ' AS "text" ' +
-          'FROM ' + options.annotation.schema + '.' + options.annotation.table + ' ' +
-          'WHERE $timeFilter';
+        'SELECT ' +
+        castTimeCol + ' AS "time", ' +
+        (options.annotation.tags || 'NULL') + ' AS "tags", ' +
+        (options.annotation.title || 'NULL') + ' AS "title", ' +
+        (options.annotation.text || 'NULL') + ' AS "text" ' +
+        'FROM ' + options.annotation.schema + '.' + options.annotation.table + ' ' +
+        'WHERE $timeFilter';
     }
 
     var query = options.annotation.query;
@@ -142,7 +152,7 @@ export default class SqlDatasource {
 
     return this._seriesQuery(query).then(data => {
       if (!data || !data.results || !data.results[0]) {
-        throw { message: 'No results in response from SqlDB' };
+        throw {message: 'No results in response from SqlDB'};
       }
       return new SqlSeries({series: data.results[0].series, annotation: options.annotation}).getAnnotations();
     });
@@ -166,10 +176,14 @@ export default class SqlDatasource {
 
 
   serializeParams(params) {
-    if (!params) { return '';}
+    if (!params) {
+      return '';
+    }
 
     return _.reduce(params, (memo, value, key) => {
-      if (value === null || value === undefined) { return memo; }
+      if (value === null || value === undefined) {
+        return memo;
+      }
       memo.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
       return memo;
     }, []).join("&");
@@ -178,7 +192,7 @@ export default class SqlDatasource {
   testDatasource() {
     return this.metricFindQuery('SELECT 1 AS num').then(
       (result) => {
-        return { status: "success", message: "Data source is working", title: "Success" };
+        return {status: "success", message: "Data source is working", title: "Success"};
       },
       (error) => {
         var errorMessage = error.data.message;
@@ -188,7 +202,7 @@ export default class SqlDatasource {
           errorMessage = 'Authentication error: Invalid user name or password';
         }
 
-        return { status: "error", message: errorMessage, title: "Error" };
+        return {status: "error", message: errorMessage, title: "Error"};
       });
   }
 
@@ -197,56 +211,56 @@ export default class SqlDatasource {
 
     var options: any = {
       method: method,
-      url:    this.url + url,
-      data:   data,
+      url: this.url + url,
+      data: data,
       precision: "ms",
-      inspect: { type: 'sqldb' },
+      inspect: {type: 'sqldb'},
       paramSerializer: this.serializeParams,
     };
 
     return this.backendSrv.datasourceRequest(options).then(result => {
       return result.data;
-    }, function(err) {
+    }, function (err) {
       if (err.status !== 0 || err.status >= 300) {
         if (err.data && err.data.error) {
-          throw { message: 'SqlDB Error Response: ' + err.data.error, data: err.data, config: err.config };
+          throw {message: 'SqlDB Error Response: ' + err.data.error, data: err.data, config: err.config};
         } else {
-          throw { message: 'SqlDB Error: ' + err.message, data: err.data, config: err.config };
+          throw {message: 'SqlDB Error: ' + err.message, data: err.data, config: err.config};
         }
       }
     });
   };
 
   _replaceQueryVars(query, options, target) {
-      var from = this._getSubTimestamp(options.rangeRaw.from, target.timeDataType, false);
-      var to = this._getSubTimestamp(options.rangeRaw.to, target.timeDataType, true);
-      var isToNow = (options.rangeRaw.to === 'now');
+    var from = this._getSubTimestamp(options.rangeRaw.from, target.timeDataType, false);
+    var to = this._getSubTimestamp(options.rangeRaw.to, target.timeDataType, true);
+    var isToNow = (options.rangeRaw.to === 'now');
 
-      var timeFilter = this._getTimeFilter(isToNow);
-      query = query.replace(/\$timeFilter/g, timeFilter);
+    var timeFilter = this._getTimeFilter(isToNow);
+    query = query.replace(/\$timeFilter/g, timeFilter);
 
-      query = query.replace(/\$from/g, from);
-      query = query.replace(/\$to/g, to);
+    query = query.replace(/\$from/g, from);
+    query = query.replace(/\$to/g, to);
 
-      from = this._getSubTimestamp(options.rangeRaw.from, 'numeric', false);
-      to = this._getSubTimestamp(options.rangeRaw.to, 'numeric', true);
-      query = query.replace(/\$unixFrom/g, from);
-      query = query.replace(/\$unixTo/g, to);
+    from = this._getSubTimestamp(options.rangeRaw.from, 'numeric', false);
+    to = this._getSubTimestamp(options.rangeRaw.to, 'numeric', true);
+    query = query.replace(/\$unixFrom/g, from);
+    query = query.replace(/\$unixTo/g, to);
 
-      from = this._getSubTimestamp(options.rangeRaw.from, 'timestamp with time zone', false);
-      to = this._getSubTimestamp(options.rangeRaw.to, 'timestamp with time zone', true);
-      query = query.replace(/\$timeFrom/g, from);
-      query = query.replace(/\$timeTo/g, to);
+    from = this._getSubTimestamp(options.rangeRaw.from, 'timestamp with time zone', false);
+    to = this._getSubTimestamp(options.rangeRaw.to, 'timestamp with time zone', true);
+    query = query.replace(/\$timeFrom/g, from);
+    query = query.replace(/\$timeTo/g, to);
 
-      var unixtimeColumn = this._getRoundUnixTime(target);
-      query = query.replace(/\$unixtimeColumn/g, unixtimeColumn);
+    var unixtimeColumn = this._getRoundUnixTime(target);
+    query = query.replace(/\$unixtimeColumn/g, unixtimeColumn);
 
-      query = query.replace(/\$timeColumn/g, target.timeCol);
+    query = query.replace(/\$timeColumn/g, target.timeCol);
 
-      var autoIntervalNum = this._getIntervalNum(target.interval || options.interval);
-      query = query.replace(/\$interval/g, autoIntervalNum);
+    var autoIntervalNum = this._getIntervalNum(target.interval || options.interval);
+    query = query.replace(/\$interval/g, autoIntervalNum);
 
-      return query;
+    return query;
   }
 
   _getTimeFilter(isToNow) {
@@ -264,11 +278,11 @@ export default class SqlDatasource {
     if (_.isString(date)) {
       if (date === 'now') {
         switch (this._abstractDataType(toDataType)) {
-        case 'timestamp':
-          return this._num2Ts('now()');
+          case 'timestamp':
+            return this._num2Ts('now()');
 
-        case 'numeric':
-          return this._ts2Num('now()', 'timestamp with time zone');
+          case 'numeric':
+            return this._ts2Num('now()', 'timestamp with time zone');
         }
       }
 
@@ -279,23 +293,23 @@ export default class SqlDatasource {
         var unit = parts[2];
 
         switch (this.dbms) {
-        case 'postgres':
-          rtn = '(now() - \'' + amount + unit + '\'::interval)';
-          break;
+          case 'postgres':
+            rtn = '(now() - \'' + amount + unit + '\'::interval)';
+            break;
 
-        case "mysql":
-          var units = {
-            'd': 'DAY',
-            'h': 'HOUR',
-            'm': 'MINUTE',
-            's': 'SECOND',
-            'w': 'WEEK',
-          };
-          rtn = 'DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL ' + amount + ' ' + units[unit] + ')';
-          break;
+          case "mysql":
+            var units = {
+              'd': 'DAY',
+              'h': 'HOUR',
+              'm': 'MINUTE',
+              's': 'SECOND',
+              'w': 'WEEK',
+            };
+            rtn = 'DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL ' + amount + ' ' + units[unit] + ')';
+            break;
 
-        default:
-          break;
+          default:
+            break;
         }
 
       } else {
@@ -310,17 +324,17 @@ export default class SqlDatasource {
     }
 
     switch (this._abstractDataType(toDataType)) {
-    case 'timestamp':
-      if (isNumericDate) {
-        rtn = this._num2Ts(rtn);
-      }
-      break;
+      case 'timestamp':
+        if (isNumericDate) {
+          rtn = this._num2Ts(rtn);
+        }
+        break;
 
-    case 'numeric':
-      if (! isNumericDate) {
-        rtn = this._ts2Num(rtn, 'timestamp with time zone');
-      }
-      break;
+      case 'numeric':
+        if (!isNumericDate) {
+          rtn = this._ts2Num(rtn, 'timestamp with time zone');
+        }
+        break;
     }
 
     return rtn;
@@ -330,20 +344,20 @@ export default class SqlDatasource {
     var col = '$timeColumn';
 
     if (this._abstractDataType(target.timeDataType) === 'timestamp') {
-       col = this._ts2Num(col, 'timestamp with time zone');
+      col = this._ts2Num(col, 'timestamp with time zone');
     }
 
     var rtn = col;
     if (target.groupBy && target.groupBy.length > 0) {
       var interval = this._getIntervalNum(target.groupBy[0].params[0]);
       switch (this.dbms) {
-      case "postgres":
-        rtn = 'round(' + col + ' / ' + interval + ') * ' + interval;
-        break;
+        case "postgres":
+          rtn = 'round(' + col + ' / ' + interval + ') * ' + interval;
+          break;
 
-      case "mysql":
-        rtn = '(' + col + ' DIV ' + interval + ') * ' + interval;
-        break;
+        case "mysql":
+          rtn = '(' + col + ' DIV ' + interval + ') * ' + interval;
+          break;
       }
     }
 
@@ -356,28 +370,28 @@ export default class SqlDatasource {
 
     } else {
       switch (this.dbms) {
-      case 'postgres':
-        return 'to_timestamp(' + str + ')';
+        case 'postgres':
+          return 'to_timestamp(' + str + ')';
 
-      case 'mysql':
-        return 'FROM_UNIXTIME(' + str + ')';
+        case 'mysql':
+          return 'FROM_UNIXTIME(' + str + ')';
 
-      default:
-        return str;
+        default:
+          return str;
       }
     }
   }
 
   _ts2Num(str, toDataType) {
     switch (this.dbms) {
-    case 'postgres':
-      return 'extract(epoch from ' + str + '::' + this._pgShortTs(toDataType) + ')';
+      case 'postgres':
+        return 'extract(epoch from ' + str + '::' + this._pgShortTs(toDataType) + ')';
 
-    case 'mysql':
-      return 'UNIX_TIMESTAMP(' + str + ')';
+      case 'mysql':
+        return 'UNIX_TIMESTAMP(' + str + ')';
 
-    default:
-      return str;
+      default:
+        return str;
     }
   }
 
@@ -425,41 +439,42 @@ export default class SqlDatasource {
 
   _abstractDataType(datatype) {
     switch (datatype) {
-    case 'timestamp with time zone':
-    case 'timestamp without time zone':
-    case 'timestamp':
-    case 'timestamptz':
-    case 'datetime':
-    case 'date':
-      return 'timestamp';
+      case 'timestamp with time zone':
+      case 'timestamp without time zone':
+      case 'timestamp':
+      case 'timestamptz':
+      case 'datetime':
+      case 'date':
+        return 'timestamp';
 
-    case 'numeric':
-    case 'decimal':
-    case 'bigint':
-    case 'integer':
-    case 'real':
-    case 'float':
-    case 'double':
-    case 'double precision':
-      return 'numeric';
+      case 'numeric':
+      case 'decimal':
+      case 'bigint':
+      case 'integer':
+      case 'real':
+      case 'float':
+      case 'double':
+      case 'double precision':
+        return 'numeric';
 
-    default:
-      return datatype;
+      default:
+        return datatype;
     }
   }
 
   _pgShortTs(str) {
     switch (str) {
-    case 'timestamptz':
-    case 'timestamp with time zone':
-      return 'timestamptz';
+      case 'timestamptz':
+      case 'timestamp with time zone':
+        return 'timestamptz';
 
-    case 'timestamp':
-    case 'timestamp without time zone':
-      return 'timestamp';
+      case 'timestamp':
+      case 'timestamp without time zone':
+        return 'timestamp';
 
-    default:
-      return str;
-    };
+      default:
+        return str;
+    }
+    ;
   }
 }

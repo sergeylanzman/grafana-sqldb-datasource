@@ -38,7 +38,7 @@ export class SqlQueryCtrl extends QueryCtrl {
     this.queryModel = new SqlQuery(this.target, templateSrv, this.panel.scopedVars);
     this.queryModel.dbms = this.datasource.dbms;
     this.queryBuilder = new SqlQueryBuilder(
-      this.target, this.datasource.dbms, { matchOperators: this.matchOperators }
+      this.target, this.datasource.dbms, {matchOperators: this.matchOperators}
     );
 
     this.resultFormats = [
@@ -88,29 +88,29 @@ export class SqlQueryCtrl extends QueryCtrl {
   }
 
   /*
-  setDefault() {
-    var query = this.queryBuilder.buildExploreQuery('SET_DEFAULT');
-    this.datasource._seriesQuery(query).then(data => {
-      if (!data.results[0].series[0].values) { return; }
-      var result = data.results[0].series[0].values[0];
-      this.target.schema          = result[0];
-      this.target.table           = result[1];
-      this.target.timeColDataType = result[2];
+   setDefault() {
+   var query = this.queryBuilder.buildExploreQuery('SET_DEFAULT');
+   this.datasource._seriesQuery(query).then(data => {
+   if (!data.results[0].series[0].values) { return; }
+   var result = data.results[0].series[0].values[0];
+   this.target.schema          = result[0];
+   this.target.table           = result[1];
+   this.target.timeColDataType = result[2];
 
-      this.schemaSegment = this.uiSegmentSrv.newSegment(this.target.schema);
-      this.tableSegment = this.uiSegmentSrv.newSegment(this.target.table);
-      this.timeColDataTypeSegment = this.uiSegmentSrv.newSegment(this.target.timeColDataType);
-    });
-  }
-  */
+   this.schemaSegment = this.uiSegmentSrv.newSegment(this.target.schema);
+   this.tableSegment = this.uiSegmentSrv.newSegment(this.target.table);
+   this.timeColDataTypeSegment = this.uiSegmentSrv.newSegment(this.target.timeColDataType);
+   });
+   }
+   */
 
   buildSelectMenu() {
     var categories = queryPart.getCategories();
-    this.selectMenu = _.reduce(categories, function(memo, cat, key) {
+    this.selectMenu = _.reduce(categories, function (memo, cat, key) {
       var menu = {
         text: key,
         submenu: cat.map(item => {
-         return {text: item.type, value: item.type};
+          return {text: item.type, value: item.type};
         }),
       };
       memo.push(menu);
@@ -135,22 +135,22 @@ export class SqlQueryCtrl extends QueryCtrl {
   }
 
   /*
-  fixGroupBySegments() {
-    var count = this.groupBySegment.length;
-    var lastSegment = this.groupBySegment[Math.max(count-1, 0)];
-    console.log(this.groupBySegment);
+   fixGroupBySegments() {
+   var count = this.groupBySegment.length;
+   var lastSegment = this.groupBySegment[Math.max(count-1, 0)];
+   console.log(this.groupBySegment);
 
-    if (!lastSegment || lastSegment.type !== 'plus-button') {
-      this.groupBySegment.push(this.uiSegmentSrv.newPlusButton());
-    }
-  }
-  */
+   if (!lastSegment || lastSegment.type !== 'plus-button') {
+   this.groupBySegment.push(this.uiSegmentSrv.newPlusButton());
+   }
+   }
+   */
 
   groupByAction() {
     this.queryModel.addGroupBy(this.groupBySegment.value);
     var plusButton = this.uiSegmentSrv.newPlusButton();
-    this.groupBySegment.value  = plusButton.value;
-    this.groupBySegment.html  = plusButton.html;
+    this.groupBySegment.value = plusButton.value;
+    this.groupBySegment.html = plusButton.html;
     this.panelCtrl.refresh();
   }
 
@@ -175,7 +175,7 @@ export class SqlQueryCtrl extends QueryCtrl {
 
   fixTagSegments() {
     var count = this.tagSegments.length;
-    var lastSegment = this.tagSegments[Math.max(count-1, 0)];
+    var lastSegment = this.tagSegments[Math.max(count - 1, 0)];
 
     if (!lastSegment || lastSegment.type !== 'plus-button') {
       this.tagSegments.push(this.uiSegmentSrv.newPlusButton());
@@ -190,8 +190,8 @@ export class SqlQueryCtrl extends QueryCtrl {
   getSchemaSegments() {
     var schemasQuery = this.queryBuilder.buildExploreQuery('SCHEMA');
     return this.datasource.metricFindQuery(schemasQuery)
-    .then(this.transformToSegments(false))
-    .catch(this.handleQueryError.bind(this));
+      .then(this.transformToSegments(false))
+      .catch(this.handleQueryError.bind(this));
   }
 
   schemaChanged() {
@@ -202,8 +202,8 @@ export class SqlQueryCtrl extends QueryCtrl {
   getTimeColDataTypeSegments() {
     var timeColQuery = this.queryBuilder.buildExploreQuery('FIELDS');
     return this.datasource.metricFindQuery(timeColQuery)
-    .then(this.transformToSegments(false))
-    .catch(this.handleQueryError.bind(this));
+      .then(this.transformToSegments(false))
+      .catch(this.handleQueryError.bind(this));
   }
 
   timeColDataTypeChanged() {
@@ -231,8 +231,8 @@ export class SqlQueryCtrl extends QueryCtrl {
     if (part.def.type === 'field') {
       var fieldsQuery = this.queryBuilder.buildExploreQuery('TAG_KEYS');
       return this.datasource.metricFindQuery(fieldsQuery)
-      .then(this.transformToSegments(true))
-      .catch(this.handleQueryError.bind(this));
+        .then(this.transformToSegments(true))
+        .catch(this.handleQueryError.bind(this));
     }
   }
 
@@ -244,7 +244,7 @@ export class SqlQueryCtrl extends QueryCtrl {
   transformToSegments(addTemplateVars) {
     return (results) => {
       var segments = _.map(results, segment => {
-        return this.uiSegmentSrv.newSegment({ value: segment.text, expandable: segment.expandable });
+        return this.uiSegmentSrv.newSegment({value: segment.text, expandable: segment.expandable});
       });
 
       if (addTemplateVars) {
@@ -269,7 +269,7 @@ export class SqlQueryCtrl extends QueryCtrl {
       ]);
     }
     if (segment.type === 'operator') {
-      var nextValue = this.tagSegments[index+1].value;
+      var nextValue = this.tagSegments[index + 1].value;
       if (/^\/.*\/$/.test(nextValue)) {
         return this.$q.when(this.uiSegmentSrv.newOperators([
           this.matchOperators.match, this.matchOperators.not
@@ -285,27 +285,27 @@ export class SqlQueryCtrl extends QueryCtrl {
     if (segment.type === 'key' || segment.type === 'plus-button') {
       query = this.queryBuilder.buildExploreQuery('TAG_KEYS');
       addTemplateVars = false;
-    } else if (segment.type === 'value')  {
-      query = this.queryBuilder.buildExploreQuery('TAG_VALUES', this.tagSegments[index-2].value);
+    } else if (segment.type === 'value') {
+      query = this.queryBuilder.buildExploreQuery('TAG_VALUES', this.tagSegments[index - 2].value);
       addTemplateVars = true;
     }
 
     return this.datasource.metricFindQuery(query)
-    .then(this.transformToSegments(addTemplateVars))
-    .then(results => {
-      if (segment.type === 'key') {
-        results.splice(0, 0, angular.copy(this.removeTagFilterSegment));
-      }
-      return results;
-    })
-    .catch(this.handleQueryError.bind(this));
+      .then(this.transformToSegments(addTemplateVars))
+      .then(results => {
+        if (segment.type === 'key') {
+          results.splice(0, 0, angular.copy(this.removeTagFilterSegment));
+        }
+        return results;
+      })
+      .catch(this.handleQueryError.bind(this));
   }
 
   getFieldSegments() {
     var fieldsQuery = this.queryBuilder.buildExploreQuery('TAG_KEYS');
     return this.datasource.metricFindQuery(fieldsQuery)
-    .then(this.transformToSegments(false))
-    .catch(this.handleQueryError);
+      .then(this.transformToSegments(false))
+      .catch(this.handleQueryError);
   }
 
   tagSegmentUpdated(segment, index) {
@@ -317,8 +317,8 @@ export class SqlQueryCtrl extends QueryCtrl {
       if (this.tagSegments.length === 0) {
         this.tagSegments.push(this.uiSegmentSrv.newPlusButton());
       } else if (this.tagSegments.length > 2) {
-        this.tagSegments.splice(Math.max(index-1, 0), 1);
-        if (this.tagSegments[this.tagSegments.length-1].type !== 'plus-button') {
+        this.tagSegments.splice(Math.max(index - 1, 0), 1);
+        if (this.tagSegments[this.tagSegments.length - 1].type !== 'plus-button') {
           this.tagSegments.push(this.uiSegmentSrv.newPlusButton());
         }
       }
@@ -335,7 +335,7 @@ export class SqlQueryCtrl extends QueryCtrl {
         segment.cssClass = 'query-segment-key';
       }
 
-      if ((index+1) === this.tagSegments.length) {
+      if ((index + 1) === this.tagSegments.length) {
         this.tagSegments.push(this.uiSegmentSrv.newPlusButton());
       }
     }
@@ -357,12 +357,12 @@ export class SqlQueryCtrl extends QueryCtrl {
       } else if (segment2.type === 'value') {
         tagOperator = this.getTagValueOperator(segment2.value, tags[tagIndex].operator);
         if (tagOperator) {
-          this.tagSegments[index-1] = this.uiSegmentSrv.newOperator(tagOperator);
+          this.tagSegments[index - 1] = this.uiSegmentSrv.newOperator(tagOperator);
           tags[tagIndex].operator = tagOperator;
         }
         tags[tagIndex].value = segment2.value;
       } else if (segment2.type === 'condition') {
-        tags.push({ condition: segment2.value });
+        tags.push({condition: segment2.value});
         tagIndex += 1;
       } else if (segment2.type === 'operator') {
         tags[tagIndex].operator = segment2.value;
@@ -375,13 +375,13 @@ export class SqlQueryCtrl extends QueryCtrl {
 
   getTagValueOperator(tagValue, tagOperator) {
     if (tagOperator !== this.matchOperators.match &&
-        tagOperator !== this.matchOperators.not &&
-        /^\/.*\/$/.test(tagValue)) {
+      tagOperator !== this.matchOperators.not &&
+      /^\/.*\/$/.test(tagValue)) {
       return this.matchOperators.match;
 
     } else if ((tagOperator === this.matchOperators.match ||
-                tagOperator === this.matchOperators.not) &&
-               /^(?!\/.*\/$)/.test(tagValue)) {
+      tagOperator === this.matchOperators.not) &&
+      /^(?!\/.*\/$)/.test(tagValue)) {
       return '=';
     }
   }

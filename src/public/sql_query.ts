@@ -25,27 +25,27 @@ export default class SqlQuery {
     target.resultFormat = target.resultFormat || 'time_series';
     target.tags = target.tags || [];
     target.groupBy = target.groupBy || [
-      {type: 'time', params: ['$interval']},
-    ];
+        {type: 'time', params: ['$interval']},
+      ];
     target.targetLists = target.targetLists || [[
-      {type: 'field', params: ['*']},
-      {type: 'count', params: []},
-    ]];
+        {type: 'field', params: ['*']},
+        {type: 'count', params: []},
+      ]];
     target.alias = target.alias || '$t.$col';
 
     this.updateProjection();
   }
 
   updateProjection() {
-    this.selectModels = _.map(this.target.targetLists, function(parts: any) {
+    this.selectModels = _.map(this.target.targetLists, function (parts: any) {
       return _.map(parts, queryPart.create);
     });
     this.groupByParts = _.map(this.target.groupBy, queryPart.create);
   }
 
   updatePersistedParts() {
-    this.target.targetLists = _.map(this.selectModels, function(selectParts) {
-      return _.map(selectParts, function(part: any) {
+    this.target.targetLists = _.map(this.selectModels, function (selectParts) {
+      return _.map(selectParts, function (part: any) {
         return {type: part.def.type, params: part.params};
       });
     });
@@ -147,7 +147,7 @@ export default class SqlQuery {
       if (operator !== '>' && operator !== '<') {
         value = "'" + value.replace('\\', '\\\\') + "'";
       }
-    } else if (interpolate){
+    } else if (interpolate) {
       value = this.templateSrv.replace(value, this.scopedVars, 'regex');
       value = "'" + value.replace(/^\//, '').replace(/\/$/, '') + "'";
     } else {
@@ -178,7 +178,7 @@ export default class SqlQuery {
     return rtn;
   }
 
- render(interpolate?) {
+  render(interpolate?) {
     var target = this.target;
 
     if (target.rawQuery) {
@@ -196,10 +196,10 @@ export default class SqlQuery {
     var query = 'SELECT ';
 
     if (target.groupBy.length !== 0) {
-      _.each(this.target.groupBy, function(groupBy, i) {
+      _.each(this.target.groupBy, function (groupBy, i) {
         if (i !== 0) {
-            query += ', ';
-            groupByClause += ', ';
+          query += ', ';
+          groupByClause += ', ';
         }
 
         switch (groupBy.type) {
