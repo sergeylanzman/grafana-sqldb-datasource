@@ -1,4 +1,4 @@
-///<reference path="app/headers/common.d.ts" />
+///<reference path="../../../../headers/common.d.ts" />
 
 import './query_part_editor';
 

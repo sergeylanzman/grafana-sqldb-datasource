@@ -1,4 +1,4 @@
-///<reference path="app/headers/common.d.ts" />
+///<reference path="../../../../headers/common.d.ts" />
 
 import _ from 'lodash';
 import queryPart from './query_part';
