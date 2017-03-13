@@ -14,12 +14,12 @@ define([
           ' class="input-mini tight-form-func-param"></input>';
         return {
           restrict: 'E',
-          templateUrl: 'public/plugins/sqldb/partials/query_part.html',
+          templateUrl: 'public/app/plugins/datasource/sqldb/dist/partials/query_part.html',
           scope: {
             part: "=",
             removeAction: "&",
             partUpdated: "&",
-            getOptions: "&",
+            getOptions: "&"
           },
           link: function postLink($scope, elem) {
             var part = $scope.part;

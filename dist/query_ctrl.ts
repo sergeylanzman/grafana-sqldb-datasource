@@ -10,7 +10,7 @@ import queryPart from './query_part';
 import {QueryCtrl} from 'app/plugins/sdk';
 
 export class SqlQueryCtrl extends QueryCtrl {
-  static templateUrl = 'partials/query.editor.html';
+  static templateUrl = 'dist/partials/query.editor.html';
 
   queryModel: SqlQuery;
   queryBuilder: any;
