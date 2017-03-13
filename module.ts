@@ -1,16 +1,16 @@
-import SqlDatasource from './datasource';
-import {SqlQueryCtrl} from './query_ctrl';
+import SqlDatasource from './dist/datasource';
+import {SqlQueryCtrl} from './dist/query_ctrl';
 
 class SqlConfigCtrl {
-  static templateUrl = 'partials/config.html';
+  static templateUrl = 'dist/partials/config.html';
 }
 
 class SqlQueryOptionsCtrl {
-  static templateUrl = 'partials/query.options.html';
+  static templateUrl = 'dist/partials/query.options.html';
 }
 
 class SqlAnnotationsQueryCtrl {
-  static templateUrl = 'partials/annotations.editor.html';
+  static templateUrl = 'dist/partials/annotations.editor.html';
 }
 
 export {
